@@ -1,0 +1,101 @@
+{% extends "main/base.html"%}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+
+<style >
+  .row_container{
+    line-height: 500%;
+  }
+</style>
+{% block content %}
+<form class="form-group mt-4" action="" method="post">
+  {% csrf_token %}
+  <h1>New Setting</h1>
+  <br>
+  {{ form.Complex }}
+  <br>
+  <br>
+  <div class="row_container" name='TRB-YTD'>
+    <div class="row mb-.1">
+      <div class="col" style="left-align">
+          {{ form.Trial_balance_Year_to_date }}
+      </div>
+      <div class="col-11">
+        <p> Trial balance YTD</p>
+      </div>
+    </div>
+  </div>
+  <div class="row_container" name="TRB-MONTH">
+    <div class="row ">
+      <div class="col" style="left-align">
+          {{ form.Trial_balance_Monthly }}
+      </div>
+      <div class="col-11">
+        <p> Trial balance Monthly</p>
+      </div>
+    </div>
+  </div>
+  <div class="row_container" name="IS-YTD">
+    <div class="row ">
+      <div class="col" style="left-align">
+          {{ form.Income_Statement_Year_to_date }}
+      </div>
+      <div class="col-11">
+        <p> Income Statement YTD</p>
+      </div>
+    </div>
+  </div>
+  <div class="row_container" name="IS-MONTHLY">
+    <div class="row ">
+      <div class="col" style="left-align">
+          {{ form.Income_Statement_Monthly }}
+      </div>
+      <div class="col-11">
+        <p> Income Statement Monthly</p>
+      </div>
+    </div>
+  </div>
+  <div class="row_container" name="AGE-ANALYSIS">
+    <div class="row ">
+      <div class="col" style="left-align">
+          {{ form.Age_Analysis }}
+      </div>
+      <div class="col-11">
+        <p> Age Analysis</p>
+      </div>
+    </div>
+  </div>
+  <div class="row_container" name="BAL-SHEET">
+    <div class="row ">
+      <div class="col" style="left-align">
+          {{ form.Balance_Sheet }}
+      </div>
+      <div class="col-11">
+        <p> Balance Sheet</p>
+      </div>
+    </div>
+  </div>
+  <div class="row_container" name="REP-MAIN-GL">
+    <div class="row ">
+      <div class="col" style="left-align">
+          {{ form.Repair_and_Maintenance_General_Ledger }}
+      </div>
+      <div class="col-11">
+        <p> Repair & Maintenance GL</p>
+      </div>
+    </div>
+  </div>
+  <div class="row_container" name="MAJOR-CAPTAL-GL">
+    <div class="row ">
+      <div class="col" style="left-align">
+          {{ form.Major_capital_Items_General_Ledger }}
+      </div>
+      <div class="col-11">
+        <p> Major Capital Items GL</p>
+      </div>
+    </div>
+  </div>
+
+<button type="submit" name="button" class="btn btn-primary "> Submit </button>
+
+</form>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "main/base.html"%}
+
+<style >
+  .htag{
+      color: blue;
+  }
+</style>
+{% block content %}
+<h1>All Settings</h1>
+<div class="htag">
+  <h6 > Add new settings or edit your existing settings !</h6>
+</div>
+<br>
+{% for entry in allClass %}
+
+
+<div class="container">
+  <div class="row mx-lg-n5">
+     <a href="{% url 'viewSettings' entry.id %}">»  {{ entry.Complex }}</a>
+  </div>
+</div>
+
+{% endfor %}
+
+<br>
+<a href="{% url 'newSetting' %}" class="btn btn-primary">➕ Add New Setting</a>
+
+{% endblock %}

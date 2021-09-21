@@ -1,0 +1,15 @@
+{% extends "main/base.html"%}
+
+{% block content%}
+<p> Would you like to :</p>
+<form action="print">
+<input type="checkbox" name="Excel" > Print To Excel
+<br>
+<input type="checkbox" name="PDF" > Print To PDF
+<br>
+<input type="checkbox" name="Preview" > Preview the Trial Balance
+<br>
+<br>
+<a href="{% url 'Kyletrb' %}" class="btn btn-primary"> Continue</a>
+</form>
+{% endblock %}
