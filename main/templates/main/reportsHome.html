@@ -1,0 +1,25 @@
+{% extends "main/base.html"%}
+
+{% block content%}
+<h1 style=" text-align: center">Reports</h1>
+<hr>
+ <br>
+
+{% for x in model %}
+             <a href="#" class='list-group-item active'>{{ x.Complex }}  Reports</a>
+
+        <div>
+            <hr>
+             <a href="{% url 'trialBalanceMonthly' reports_pk=x.pk %}" type="button" class="btn btn-outline-primary btn-sm" > Trial Balance Monthly</a>
+             <a href="{% url 'trialBalanceYearly' reports_pk=x.pk %}" type="button" class="btn btn-outline-primary btn-sm" >Trial Balance YTD</a>
+            <br>
+             <a href="{% url 'incomeStatementMonthly' reports_pk=x.pk %}" type="button" class="btn btn-outline-primary btn-sm" > Income Statement Monthly</a>
+             <a href="{% url 'incomeStatementYearly' reports_pk=x.pk %}" type="button" class="btn btn-outline-primary btn-sm" > Income Statement YTD</a>
+             <br>
+             <a href="{% url 'AgeAnalysisCSV' reports_pk=x.pk %}" type="button" class="btn btn-outline-primary btn-sm" > Credit Control Report </a>
+            <hr>
+        </div>
+        <br>
+{% endfor %}
+
+{% endblock %}
