@@ -43,18 +43,18 @@
     <th>Description</th>
     <th>Debit</th>
     <th>Credit</th>
-    {% for xAll in xAlls %}
+    {% for arr_trbYTD in arr_trbYTD %}
       <tr>
-        <td>{{ xAll.Description }}</td>
-        <td>{{ xAll.Account }}</td>
+        <td>{{ arr_trbYTD.Description }}</td>
+        <td>{{ arr_trbYTD.Account }}</td>
         <td>
-        {%if xAll.Debit > 0%}
-            {{xAll.Debit}}
+        {%if arr_trbYTD.Debit > 0%}
+            {{arr_trbYTD.Debit}}
         {%endif%}
         </td>
         <td>
-        {%if xAll.Credit > 0%}
-          {{xAll.Credit}}
+        {%if arr_trbYTD.Credit > 0%}
+          {{arr_trbYTD.Credit}}
         {%endif%}
         </td>
       </tr>
