@@ -1,0 +1,28 @@
+{% extends "main/base.html"%}
+
+{% block content%}
+<h1 style=" text-align: center">Reports</h1>
+<hr>
+ <br>
+<div class="row mb-3">
+    <div class="col">
+    </div>
+    <div class="col">
+        <form>
+            <input type="date" name="reportDate"> <input type="submit">
+        </form>
+    </div>
+</div>
+<br>
+{% for x in model %}
+             <a href="#" class='list-group-item active'>{{ x.Complex }}  Reports</a>
+
+        <div>
+            <hr>
+            <a href="{% url 'InterestChargeCSV' reports_pk=x.pk %}" href="# {{ x.Complex }}" type="button" class="btn btn-outline-primary btn-sm" > Interest Batch </a>
+            <hr>
+        </div>
+        <br>
+{% endfor %}
+
+{% endblock %}

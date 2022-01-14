@@ -1,0 +1,56 @@
+{% extends "main/base.html"%}
+
+{% block content%}
+<h1 class="h1"> Journal Entry </h1>
+<br>
+<form>
+    <div style="text-align: left">
+        Date <input type="date" name="TxDate">
+        <br>
+        <br>
+        Print Cheque <input type="checkbox" name="printCheque">
+        <br>
+        <br>
+        Module <select name="Module">
+            <option value="GL">GL</option>
+            <option value="AR">AR</option>
+            <option value="AP">AP</option>
+        </select>
+        ID <select>
+            <option value="JL">JL</option>
+            <option value="CB">CB</option>
+            <option value="CBAR">CBAR</option>
+            <option value="ARTx">ARTx</option>
+        </select>
+        <br>
+        <br>
+        Debit <input type="number" name="Debit">
+        <br>
+        <br>
+        Credit <input type="number" name="Credit" >
+        <br>
+        <br>
+        Account <select name="Description">
+        {% for x in accountsAll %}
+        <option value="{{ x.Account }}"><div class="row mb-1"><div class="col"> {{ x.Account }}</div> <div class="col">|| {{ x.Description }} </div><div class="col">|| {{ x.AccountType }}</div></div></option>
+        {% endfor %}
+        </select>
+        <br>
+        <br>
+        Reference <input type="number" name="Reference" >
+        <br>
+        <br>
+        Payee Name <input type="Text" name="Payee" >
+        <br>
+        <br>
+        Deposit <input type="Text" name="Deposit" >
+        <br>
+        <br>
+        Tax <select name="Tax">
+        {% for x in taxAll %}
+        <option value="{{ x.Code }}"><div class="row mb-1"><div class="col"> {{ x.Code }}</div> <div class="col">|| {{ x.Description }} </div><div class="col">|| {{ x.TaxRate }}</div></div></option>
+        {% endfor %}
+
+    </div>
+</form>
+{% endblock %}

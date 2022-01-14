@@ -1,0 +1,48 @@
+
+{% extends "main/base.html"%}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+
+{% block content %}
+<h1>
+    Show Single Customer Details
+</h1>
+<br>
+<br>
+<div>
+<form action="" method="post">
+    {% csrf_token %}
+    <fieldset>
+        Complex<select name="Complex" class="form-control">
+            {% for x in model %}
+                <option value="{{ x.Complex }}">  {{  x.Complex  }}  </option>
+            {% endfor %}
+        </select>
+        <br>
+        <br>
+        Unit <input type="text" name="Unit" class="form-control">
+        <br>
+        <br>
+        <input type="submit">
+        <br>
+        <br>
+        <div class="alert alert-success" role="alert">
+            {{ messageUnit }}
+        </div>
+        <div class="alert alert-success" role="alert">
+            {{ messageName }}
+        </div>
+        <div class="alert alert-success" role="alert">
+            {{ messageContactPerson }}
+        </div>
+        <div class="alert alert-success" role="alert">
+            {{ messageTelNumbers }}
+        </div>
+        <div class="alert alert-success" role="alert">
+            {{ messageEmail }}
+        </div>
+
+    </fieldset>
+</form>
+</div>
+
+{% endblock %}

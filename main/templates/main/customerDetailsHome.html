@@ -1,0 +1,18 @@
+{% extends "main/base.html"%}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+
+{% block content %}
+
+<h1 class="h1" style="text-align: center;">
+    Customer Details
+</h1>
+<br>
+<div class="row mb-5" style="padding-left: 50px; padding-right: 60px">
+    <div class="col" >
+        <a href="{% url 'customerDetails' %}" class="btn btn-light btn-lg btn-block" style="height:800px;width:100%;background-image: url('https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZmxhdHN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60');background-size:     cover; background-repeat:   no-repeat;" > <h2 class="h2" style="text-align: center; padding-top: 350px; color: white; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">Change Details</h2> </a>
+    </div>
+    <div class="col">
+        <a href="{% url 'complexCustomerList' %}" class="btn btn-light btn-lg btn-block" style="height:800px;width:100%;background-image: url('https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8Y2FsbHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=200&q=60');background-size:     cover; background-repeat:   no-repeat;"> <h2 class="h2" style="text-align: center; padding-top: 350px; color: white;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">View Details</h2> </a>
+    </div>
+</div>
+{% endblock %}
