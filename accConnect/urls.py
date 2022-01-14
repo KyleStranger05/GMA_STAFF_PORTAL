@@ -5,6 +5,7 @@ from main import views as views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('pov:yourmom', views.yourmom , name='yourmom'),
 
     # Accounts
     path('login/home/' , views.home , name = 'home'),
@@ -22,7 +23,6 @@ urlpatterns = [
 
     #ReportsHome
     path('reportsHome' , views.reportsHome, name='reportsHome'),
-    path('creditControl' , views.creditControl, name='creditControl'),
     path('accConnect/printReports/<int:reports_pk>' , views.printReports , name='printReports'),
 
     #Print Each Report
@@ -30,6 +30,24 @@ urlpatterns = [
     path('accConnect/trialBalanceYearly/<int:reports_pk>' , views.trialBalanceYearly, name='trialBalanceYearly'),
     path('accConnect/incomeStatementMonthly/<int:reports_pk>', views.incomeStatementMonthly, name='incomeStatementMonthly'),
     path('accConnect/incomeStatementYearly/<int:reports_pk>', views.incomeStatementYearly, name='incomeStatementYearly'),
+
+    #Credit Control
     path('accConnect/AgeAnalysisCSV/<int:reports_pk>', views.AgeAnalysisCSV, name='AgeAnalysisCSV'),
+    path('accConnect/InterestChargeCSV/<int:reports_pk>', views.InterestChargeCSV, name='InterestChargeCSV'),
+    path('creditControlHome1231217581' , views.creditControlHome , name='creditControlHome'),
+    path('creditControl', views.creditControl, name='creditControl'),
+    path('interestBatches', views.interestBatches, name='interestBatches'),
+
+    #Customer Updates
+    path('accConnect/printViewCustomers/<int:reports_pk>', views.printViewCustomers , name='printViewCustomers'),
+    path('complexCustomerList' , views.complexCustomerList , name='complexCustomerList'),
+    path('customerDetailsHome' , views.customerDetailsHome , name='customerDetailsHome'),
+    path('cdcComplex' , views.customerDetails , name='customerDetails'),
+    path('accConnect/DisplayCustomers/<int:reports_pk>' , views.DisplayCustomers , name='DisplayCustomers'),
+    path('viewDetailsHome' , views.viewDetailsHome , name='viewDetailsHome'),
+    path('viewSingleCustomer', views.viewSingleCustomer , name='viewSingleCustomer'),
+
+    #Journal Entry
+    path('journentry', views.journalEntry , name='journalEntry'),
 
 ]

@@ -53,12 +53,18 @@
 <body>
   <!-- Side navigation -->
   <div class="sidenav">
-    <a href="{% url 'settingsHome' %}">Settings</a>
-    <a href="{% url 'reportsHome' %}">Reports</a>
+      {% if user.is_staff %}
+        <a href="{% url 'settingsHome' %}">Settings</a>
+      {% endif %}
+
+    <a href="{% url 'reportsHome' %}">General Reports</a>
+
     {% if user.is_staff %}
-        <a href="{% url 'creditControl' %}">Credit Control</a>
+     <a href="{% url 'creditControlHome' %}">Credit Control</a>
     {% endif %}
-    <a href="{% url 'Kyletrb' %}">Test Report</a>
+
+    <a href="{% url 'customerDetailsHome' %}">Customer Details</a>
+
   </div>
 
   <!-- Page content -->

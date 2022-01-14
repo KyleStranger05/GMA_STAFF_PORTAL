@@ -8,12 +8,11 @@ import tempfile
 import datetime
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from .models import SettingsClass
-from .forms import SettingsForm , SettingUpdateForm
+from .models import SettingsClass , ComplexListClass
+from .forms import SettingsForm , SettingUpdateForm , ComplexListForm
 import csv
 from io import BytesIO
 import xlsxwriter
-import numpy as np
 
 one_yrs_ago = datetime.now() - relativedelta(years=1)
 one_month_ago = datetime.now() - relativedelta(months=1)
@@ -24,26 +23,26 @@ onehundredeighty_days_ago = datetime.now() - relativedelta(days=180)
 
 complex_list = [
                 ('Kyle','Kyle'),
-                ('5th On Brooklyn BC','5th On Brooklyn BC'),
+                ('5th Brooklyn BC','5th Brooklyn BC'),
                 ('Ashkelon BC','Ashkelon BC'),
                 ('Avonlea BC','Avonlea BC' ),
                 ('Birchleigh View BC','Birchleigh View BC'),
                 ('Birchpark BC','Birchpark BC'),
-                ('Birds View HOA','Birds View HOA'),
+                ('Birdsview HOA','Birdsview HOA'),
                 ('Blueberry Lane BC','Blueberry Lane BC'),
                 ('BMT Community','BMT Community'),
                 ('Bolderview BC','Bolderview BC'),
                 ('Boschendal Manor BC','Boschendal Manor BC'),
                 ('Bridgetown BC','Bridgetown BC'),
                 ('Camperdown BC','Camperdown BC'),
-                ('Caro Brooke HOA','Caro Brooke HOA'),
+                ('Caro Brooke','Caro Brooke'),
                 ('Columbus Gardens BC','Columbus Gardens BC'),
                 ('Constantia Park','Constantia Park'),
                 ('Constantia Place BC','Constantia Place BC'),
                 ('CPH Court BC','CPH Court BC'),
                 ('Daphne Heights BC','Daphne Heights BC'),
                 ('Dennehof ','Dennehof'),
-                ('De Scheepen HOA','De Scheepen HOA'),
+                ('De Shepen HOA','De Shepen HOA'),
                 ('Drommedaris BC','Drommedaris BC'),
                 ('Eden Gardens BC','Eden Gardens BC'),
                 ('Falcon Haven BC','Falcon Haven BC'),
@@ -51,6 +50,7 @@ complex_list = [
                 ('Founders View HOA','Founders View HOA'),
                 ('Glen Eden Villas BC','Glen Eden Villas BC'),
                 ('Graceland Estates BC','Graceland Estates BC'),
+                ('Grantwood Close BC', 'Grantwood Close BC'),
                 ('Hadedahs HOA','Hadedahs HOA'),
                 ('Hillside Estate HOA','Hillside Estate HOA'),
                 ('Ingwe BC','Ingwe BC'),
@@ -69,18 +69,19 @@ complex_list = [
                 ('River Close BC','River Close BC'),
                 ('Robin Place BC','Robin Place BC'),
                 ('Round About BC','Round About BC'),
-                ('Ruddell Gardens BC','Ruddell Gardens BC'),
+                ('Ruddel Garden BC','Ruddel Garden BC'),
                 ('Saligna Mews BC','Saligna Mews BC'),
-                ('Sandpipers Nest','Sandpipers Nest'),
+                ('Sandpipers Nest BC','Sandpipers Nest BC'),
                 ('San Lameer','San Lameer'),
                 ('Stone Arch Village BC','Stone Arch Village BC'),
                 ('Sunnyside Terrace BC','Sunnyside Terrace BC'),
                 ('Sunridge BC','Sunridge BC'),
                 ('Swallows Nest BC','Swallows Nest BC'),
-                ('The Drommedaris BC','The Drommedaris BC'),
+                ('The Dromedaris BC','The Dromedaris BC'),
+                ('The Pearls of Fourways','The Pearls of Fourways'),
                 ('Tulbagh Gardens','Tulbagh Gardens'),
                 ('Victoria BC','Victoria BC'),
-                ('Villa De Monte Negro BC','Villa De Monte Negro BC'),
+                ('Villa Di Monte Negro BC','Villa Di Monte Negro BC'),
                 ('Villa Grove','Villa Grove'),
                 ('Villa Izanie BC','Villa Izanie BC'),
                 ('Villa Marina BC','Villa Marina BC'),
@@ -390,11 +391,21 @@ def reportsHome(request):
     content ={'model':model }
     return render(request, 'main/reportsHome.html' , content)
 
+def creditControlHome(request):
+
+    return render(request , 'main/creditControlHome.html')
+
 def creditControl(request):
     model = SettingsClass.objects.all().order_by('Complex')
 
     content ={'model':model }
     return render(request, 'main/creditControl.html' , content)
+
+def interestBatches(request):
+    model = SettingsClass.objects.all().order_by('Complex')
+
+    content ={'model':model }
+    return render(request, 'main/interestBatches.html' , content)
 
 def printReports(request , reports_pk):
     pkForm = get_object_or_404(SettingsClass, pk=reports_pk)
@@ -653,7 +664,7 @@ def trialBalanceYearly(self , reports_pk):
             output.seek(0)
             response.write(output.read())
     else:
-        response = redirect('main/reportsHome')
+        response = redirect('reportsHome')
 
     return response
 
@@ -768,7 +779,7 @@ def trialBalanceMonthly(self ,  reports_pk):
             output.seek(0)
             response.write(output.read())
     else:
-        response = redirect('main/reportsHome')
+        response = redirect('reportsHome')
 
     return response
 
@@ -906,7 +917,7 @@ def incomeStatementMonthly(self , reports_pk):
             output.seek(0)
             response.write(output.read())
     else:
-        response = redirect('main/reportsHome')
+        response = redirect('reportsHome')
 
     return response
 
@@ -1043,7 +1054,7 @@ def incomeStatementYearly(self , reports_pk):
             output.seek(0)
             response.write(output.read())
     else:
-        response = redirect('main/reportsHome.html')
+        response = redirect('reportsHome')
 
     return response
 
@@ -1057,8 +1068,8 @@ def AgeAnalysisCSV(self , reports_pk):
                              'SERVER=192.168.1.1;'
                              'PORT=1433;'
                              'DATABASE=' + complexName + ';'
-                             'UID=kyle_dev_ro;'
-                             'PWD=fh$sa#8d#7F8Y3;'
+                             'UID=sa;'
+                             'PWD=Z1p73r;'
                              )
 
     ownersAccounts = "Select Count(*) from dbo.Client Where iClassID = '1'"
@@ -1066,46 +1077,13 @@ def AgeAnalysisCSV(self , reports_pk):
     cursor.execute(ownersAccounts);
     xOwnersAccounts = cursor.fetchone()                                         #Gets the amount of Owners Units
 
-    ageSelect = "SELECT Account, [Name], EMail, Age1, Age2, Age3, Age4, Age5, DCBalance, "\
-    "CASE "\
-        "WHEN AccountLink IS NULL THEN DCBalance "\
-        "WHEN UADebits <> 0 AND DCBalance > 0 THEN DCBalance - Age2 + Age3 + Age4 + Age5 "\
-        "WHEN UADebits = 0 AND DCBalance < 0 THEN 0 "\
-        "WHEN UADebits = 0 AND DCBalance > 0 THEN DCBalance "\
-    "END AS Age1_New "\
-    ","\
-    "Case "\
-        "WHEN AccountLink IS NULL THEN 0 "\
-		"WHEN UADebits <> 0 AND DCBalance > 0 THEN Age2 "\
-		"WHEN UADebits = 0 AND DCBalance < 0 AND Age2 = 0 THEN 0 "\
-        "WHEN UADebits = 0 AND DCBalance < 0 THEN fForeignBalance + Age2 - FCAge2 "\
-       "WHEN UADebits = 0 AND DCBalance > 0 THEN 0 "\
-    "END Age2_New "\
-    ", "\
-    "CASE "\
-        "WHEN AccountLink IS NULL Then 0 "\
-		"WHEN UADebits <> 0 AND DCBalance > 0 THEN Age3 "\
-		"WHEN UADebits = 0 AND DCBalance < 0 AND Age3 = 0 THEN 0 "\
-        "WHEN UADebits = 0 AND DCBalance < 0 THEN fForeignBalance + Age3 - FCAge3 "\
-        "WHEN UADebits = 0 AND DCBalance > 0 THEN 0 "\
-    "END Age3_New "\
-    ", "\
-    "CASE "\
-        "WHEN AccountLink IS NULL THEN 0 "\
-		"WHEN UADebits <> 0 AND DCBalance > 0 THEN Age4 "\
-		"WHEN UADebits = 0 AND DCBalance < 0 AND Age4 = 0 THEN 0 "\
-        "WHEN UADebits = 0 AND DCBalance < 0 THEN fForeignBalance + Age4 - FCAge4 "\
-        "WHEN UADebits = 0 AND DCBalance > 0 THEN 0 "\
-    "END Age4_New "\
-    ", "\
-    "CASE "\
-        "WHEN AccountLink IS NULL THEN 0 "\
-		"WHEN UADebits <> 0 AND DCBalance > 0 THEN Age5 "\
-		"WHEN UADebits = 0 AND DCBalance < 0 AND Age5 = 0 THEN 0 "\
-        "WHEN UADebits = 0 AND DCBalance < 0 THEN fForeignBalance + Age5 - FCAge5 "\
-        "WHEN UADebits = 0 AND DCBalance > 0 THEN 0 "\
-    "END Age5_New "\
-    "FROM [dbo].[_avCustomerAging]  Where iClassID <> 0 and DCBalance <> 0"
+    ageSelect = "Select EMail , [Name], DrCrAccount , Account "\
+	",Round(Sum(Credit) - Sum(Debit),2) as Balance "\
+    " FROM PostGL "\
+    " Inner JOIN Client as Client on Client.DCLink = DrCrAccount "\
+    " WHERE AccountLink <> '104' and TxDate < '2022/01/31' and id <> 'CB' "\
+    " GROUP BY DrCrAccount, Account , EMail , [Name]"\
+    " ORDER BY DrCrAccount "
 
     cursor = connect.cursor();
     cursor.execute(ageSelect);
@@ -1115,15 +1093,11 @@ def AgeAnalysisCSV(self , reports_pk):
 
     for row in xAgeSelect:
         rdict = {}
-        rdict["Account"] = row[0]
+        rdict["E-mail"] = row[0]
         rdict["Name"] = row[1]
-        rdict["E-mail"] = row[2]
-        rdict["Total"] = row[8]
-        rdict["Current"] = row[9]
-        rdict["30Day"] = row[10]
-        rdict["60Day"] = row[11]
-        rdict["90Day"] = row[12]
-        rdict["120Day"] = row[13]
+        rdict["DrCrAccount"] = row[2]
+        rdict["Account"] = row[3]
+        rdict["Balance"] = row[4]
         ageSelect.append(rdict)
 
     totalCurent = "Select  Round(Sum(DCBalance),2) From dbo.Client Where iClassID ='1' "
@@ -1139,7 +1113,7 @@ def AgeAnalysisCSV(self , reports_pk):
     worksheet = workbook.add_worksheet()
 
     data1 = ('Prepared By : Atout(PTY) ltd', '')
-    data2 = ('Customer Age Analysis for Monthly Customers as at 15/11/21', '')
+    data2 = ('Customer Age Analysis for Monthly Customers as at 15/01/22', '')
     data3 = (
         'Account', ' ', ' ', '120+ Days', '90 Days', '60 Days', '30 days', 'Current', 'Total', '', 'Name', 'E-mail')
 
@@ -1149,13 +1123,13 @@ def AgeAnalysisCSV(self , reports_pk):
 
     count = 4
     for x  in ageSelect:
+        if x["Balance"] > 0:
+            data4 = (
+                x["Account"], '*', ' ','','','','','',x["Balance"],'',x["Name"],x["E-mail"]
+            )
 
-        data4 = (
-            x["Account"], '*', ' ',x["120Day"],x["90Day"],x["60Day"],x["30Day"],x["Current"],x["Total"],'',x["Name"],x["E-mail"]
-        )
-
-        worksheet.write_row('A'+str(count) , data4 )
-        count= count +1
+            worksheet.write_row('A'+str(count) , data4 )
+            count= count +1
 
     for x in XtotalCurent:
         counter = count
@@ -1176,3 +1150,309 @@ def AgeAnalysisCSV(self , reports_pk):
     response.write(output.getvalue())
 
     return response
+
+def customerDetails(request):
+    model = SettingsClass.objects.all().order_by('Complex')
+    form = ComplexListForm
+    message = ''
+    if request.method=="POST":
+        complex = request.POST.get("Complex")
+        unitNo =  request.POST.get("Unit")
+        phoneNo = request.POST.get("PhoneNumber")
+        email = request.POST.get("E-mailAddress")
+
+        unitNumber = int(unitNo) + 1
+
+        customerCXNX = pyodbc.connect('DRIVER={SQL Server};'
+                                           'SERVER=192.168.1.1;'
+                                            'PORT=1433;'
+                                            'DATABASE=' + complex + ';'
+                                            'UID=sa;'
+                                            'PWD=Z1p73r;'
+                                            )
+
+        print('The following changes have been successfully made ' + complex + ' - Unit ' + unitNo + '    Phone Number :' + phoneNo + ' E-mail :' + email)
+        updateCustomer = "Update dbo.Client Set Telephone = ? , EMail = ? where DCLink = ?"
+        cursor = customerCXNX.cursor();
+        cursor.execute(updateCustomer , phoneNo , email , unitNumber);
+        customerCXNX.commit()
+
+        message = 'The following changes have been successfully made to ' + complex + ' - Unit ' + unitNo + '    Phone Number :' + phoneNo + ' E-mail :' + email
+
+
+    content = {'model': model , 'form':form , 'message':message}
+    return render(request, 'main/customerDetails.html', content)
+
+def viewSingleCustomer(request):
+    model = SettingsClass.objects.all().order_by('Complex')
+    form = ComplexListForm
+    messageUnit = ''
+    messageName = ''
+    messageContactPerson = ''
+    messageTelNumbers = ''
+    messageEmail = ''
+
+    if request.method=="POST":
+        complex = request.POST.get("Complex")
+        unitNo =  request.POST.get("Unit")
+
+        unitNumber = int(unitNo) + 1
+
+        customerCXNX = pyodbc.connect('DRIVER={SQL Server};'
+                                           'SERVER=192.168.1.1;'
+                                            'PORT=1433;'
+                                            'DATABASE=' + complex + ';'
+                                            'UID=sa;'
+                                            'PWD=Z1p73r;'
+                                            )
+
+        selectCustomer = "Select Account , Name ,Telephone, Telephone2 , EMail , Contact_Person from dbo.Client where DCLink = ?"
+        cursor = customerCXNX.cursor();
+        cursor.execute(selectCustomer , unitNumber);
+        detailsSelect = cursor.fetchall()
+        detailsSelected = []
+
+        for row in detailsSelect:
+            rdict = {}
+            rdict["Account"] = row[0]
+            rdict["Name"] = row[1]
+            rdict["Telephone"] = row[2]
+            rdict["Telephone2"] = row[3]
+            rdict["Email"] = row[4]
+            rdict["Contact_Person"] = row[5]
+            detailsSelected.append(rdict)
+
+        messageUnit = 'Unit: ' + detailsSelected["Account"]
+        messageName = 'Name: ' +detailsSelect["Name"]
+        messageContactPerson = 'Contact Person: ' + detailsSelect["Contact_Person"]
+        messageTelNumbers =  'Telephone Numbers: ' + detailsSelect["Telephone"] +'/'+  detailsSelect["Telephone2"]
+        messageEmail = 'E-mail: ' + detailsSelect["Email"]
+
+    content = {'model': model , 'form':form , 'messageUnit':messageUnit ,'messageName':messageName ,'messageContactPerson':messageContactPerson ,'messageTelNumbers':messageTelNumbers,'messageEmail':messageEmail}
+    return render(request, 'main/viewSingleCustomer.html', content)
+
+def journalEntry(request):
+    cnxn = pyodbc.connect('DRIVER={SQL Server};'
+                        'SERVER=192.168.1.1;'
+                        'PORT=1433;'
+                        'DATABASE=Kyle;'
+                        'UID=kyle_dev_ro;'
+                        'PWD=fh$sa#8d#7F8Y3;')
+
+    accounts = ' Select Master_Sub_Account , Description , cAccountTypeDescription from [Kyle].[dbo].[Accounts] as Accounts Inner Join [Kyle].[dbo].[_etblGLAccountTypes] as AccountTypes ' \
+               'on Accounts.iAccountType = AccountTypes.idGLAccountType '
+    cursor = cnxn.cursor();
+    cursor.execute(accounts);
+    Xaccounts = cursor.fetchall()
+    cursor.close()
+    accountsAll = []
+    for row in Xaccounts:
+        rdict = {}
+        rdict["Account"] = row[0]
+        rdict["Description"] = row[1]
+        rdict["AccountType"] = row[2]
+        accountsAll.append(rdict)
+
+    tax = ' Select Code , Description , TaxRate from [Kyle].[dbo].[TaxRate] '
+    cursor = cnxn.cursor();
+    cursor.execute(tax);
+    Xtax = cursor.fetchall()
+    cursor.close()
+    taxAll = []
+    for row in Xtax:
+        rdict = {}
+        rdict["Code"] = row[0]
+        rdict["Description"] = row[1]
+        rdict["TaxRate"] = row[2]
+        taxAll.append(rdict)
+
+    content = {'accountsAll':accountsAll , 'taxAll':taxAll}
+    return render(request, 'main/journalEntry.html', content)
+
+def InterestChargeCSV(request, reports_pk):
+    pkForm = get_object_or_404(SettingsClass, pk=reports_pk)
+
+    complexName = pkForm.Complex
+
+
+    # Getting list of DB Names
+    connect = pyodbc.connect('DRIVER={SQL Server};'
+                             'SERVER=192.168.1.1;'
+                             'PORT=1433;'
+                             'DATABASE=' + complexName + ';'
+                             'UID=kyle_dev_ro;'
+                             'PWD=fh$sa#8d#7F8Y3;'
+                             )
+
+
+    # Starting CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=" ' + complexName + ' Interest Batch.csv"'
+    writer = csv.writer(response)
+
+    selectBalances =    " SELECT   DrCrAccount , Account, Round(Sum(Credit) - Sum(Debit),2) as Balance, Round(Round(Sum(Credit) - Sum(Debit),2)*0.02,2) as Interest FROM [dbo].[PostGL] as PostGl" \
+                        " Inner JOIN [dbo].[Client] as Client on Client.DCLink = DrCrAccount " \
+                        " Where AccountLink <> '104' and TxDate < '2022/01/16' and id <> 'CB' Group By Account , DrCrAccount Order By DrCrAccount "
+    cursor = connect.cursor();
+    cursor.execute(selectBalances);
+    XselectBalances = cursor.fetchall()
+    cursor.close()
+    Balances = []
+    for row in XselectBalances:
+        rdict = {}
+        rdict["DrCrAccount"] = row[0]
+        rdict["Account"] = row[1]
+        rdict["Balance"] = row[2]
+        rdict["2% Interest"] = row[3]
+        Balances.append(rdict)
+
+    for x in Balances:
+        if x["Balance"] > 200:
+            writer.writerow([
+                    '2022/02/15',
+                    x["Account"],
+                    'AR',
+                    'Interest',
+                    '0',
+                    '10-Jan',
+                    'Interest',
+                    ' ',
+                    x["2% Interest"],
+                    ' ',
+                    ' ',
+                    '0',
+                    x["2% Interest"],
+                    '1',
+                    x["2% Interest"],
+                    x["2% Interest"],
+                    '0',
+                    '0',
+                    ' ',
+                    '0',
+                    '0',
+                    '0',
+                    ' ',
+                    ' ',
+                    '0',
+                    '0',
+                    ' ',
+                    '0',
+                    '0',
+                    '0',
+                    '2750>050',
+                    '0',
+                    '0'
+                ])
+
+
+    return response
+
+def complexCustomerList(request):
+    model = SettingsClass.objects.all().order_by('Complex')
+
+    content ={'model':model }
+    return render(request, 'main/complexCustomerList.html' , content)
+
+def DisplayCustomers(request, reports_pk ):
+    pkForm = get_object_or_404(SettingsClass, pk=reports_pk)
+
+    complexName = pkForm.Complex
+
+    connect = pyodbc.connect('DRIVER={SQL Server};'
+                             'SERVER=192.168.1.1;'
+                             'PORT=1433;'
+                             'DATABASE=' + complexName + ';'
+                             'UID=kyle_dev_ro;'
+                             'PWD=fh$sa#8d#7F8Y3;'
+                             )
+
+    viewCustomersSQL = ' Select Account , Name , Contact_Person , Telephone , Telephone2 , Fax1 , Fax2, EMail from dbo.Client Where DCLink <> 1 '
+
+    cursor = connect.cursor();
+    cursor.execute(viewCustomersSQL);
+    viewCustomersData = cursor.fetchall()
+    cursor.close()
+    viewCustomers = []
+    for row in viewCustomersData:
+        rdict = {}
+        rdict["Account"] = row[0]
+        rdict["Name"] = row[1]
+        rdict["Contact_Person"] = row[2]
+        rdict["Telephone"] = row[3]
+        rdict["Telephone2"] = row[4]
+        rdict["Fax1"] = row[5]
+        rdict["Fax2"] = row[6]
+        rdict["Email"] = row[7]
+        viewCustomers.append(rdict)
+
+    content ={'viewCustomers':viewCustomers }
+    return render(request, 'main/viewCustomers.html' , content)
+
+def printViewCustomers(request , reports_pk):
+    pkForm = get_object_or_404(SettingsClass, pk=reports_pk)
+
+    complexName = pkForm.Complex
+
+    connect = pyodbc.connect('DRIVER={SQL Server};'
+                             'SERVER=192.168.1.1;'
+                             'PORT=1433;'
+                             'DATABASE=' + complexName + ';'
+                             'UID=kyle_dev_ro;'
+                              'PWD=fh$sa#8d#7F8Y3;'
+                             )
+
+    viewCustomersSQL = ' Select Account , Name , Contact_Person , Telephone , Telephone2 , Fax1 , Fax2, EMail from dbo.Client Where DCLink <> 1 '
+
+    cursor = connect.cursor();
+    cursor.execute(viewCustomersSQL);
+    viewCustomersData = cursor.fetchall()
+    cursor.close()
+    viewCustomers = []
+    for row in viewCustomersData:
+        rdict = {}
+        rdict["Account"] = row[0]
+        rdict["Name"] = row[1]
+        rdict["Contact_Person"] = row[2]
+        rdict["Telephone"] = row[3]
+        rdict["Telephone2"] = row[4]
+        rdict["Fax1"] = row[5]
+        rdict["Fax2"] = row[6]
+        rdict["Email"] = row[7]
+        viewCustomers.append(rdict)
+
+    # Starting CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=" ' + complexName + ' Customer Details.csv"'
+    writer = csv.writer(response)
+
+    writer.writerow([
+        'Unit',
+        'Name',
+        'Contact Person',
+        'Telephone 1',
+        'Telephone 2',
+        'E-mail'
+    ])
+
+    for x in viewCustomers:
+        writer.writerow([
+            x["Account"],
+            x["Name"],
+            x["Contact_Person"],
+            x["Telephone"],
+            x["Telephone2"],
+            x["Email"]
+        ])
+
+    return response
+
+def customerDetailsHome(request):
+
+    return render(request, 'main/customerDetailsHome.html')
+
+def viewDetailsHome(request):
+
+    return render(request , 'main/viewDetailsHome.html')
+
+def yourmom(request):
+    return redirect('https://www.youtube.com/watch?v=HIcSWuKMwOw')

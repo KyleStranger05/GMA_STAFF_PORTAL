@@ -15,9 +15,7 @@
             <br>
              <a href="{% url 'incomeStatementMonthly' reports_pk=x.pk %}" type="button" class="btn btn-outline-primary btn-sm" > Income Statement Monthly</a>
              <a href="{% url 'incomeStatementYearly' reports_pk=x.pk %}" type="button" class="btn btn-outline-primary btn-sm" > Income Statement YTD</a>
-             <br>
-             <a href="{% url 'AgeAnalysisCSV' reports_pk=x.pk %}" type="button" class="btn btn-outline-primary btn-sm" > Credit Control Report </a>
-            <hr>
+             <hr>
         </div>
         <br>
 {% endfor %}
