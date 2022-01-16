@@ -149,9 +149,13 @@ class SettingsClass(models.Model):
 
 class ComplexListClass(models.Model):
     ComplexName = models.CharField(choices=complex_list , max_length =  50 ,default='1' , unique=True)
-    NumberOfUnits = models.IntegerField(max_length=2 , blank=False , default=1 )
+    NumberOfUnits = models.IntegerField(blank=False , default=1 )
 
     def __str__(self):
         return (self.ComplexName)
+
+
+
+
 
 

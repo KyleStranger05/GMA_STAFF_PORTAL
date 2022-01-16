@@ -1456,3 +1456,4 @@ def viewDetailsHome(request):
 
 def yourmom(request):
     return redirect('https://www.youtube.com/watch?v=HIcSWuKMwOw')
+
